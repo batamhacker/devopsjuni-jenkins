@@ -27,4 +27,15 @@ node {
             }
         }
     }
+
+    // Integration test
+    stage("Test"){
+        docker.image('agung3wi/alpine-rsync:1.1').inside('-u root') {
+            sshagent (credentials: ['ssh-dev']) {
+                sh 'mkdir -p ~/.ssh'
+                sh 'ssh-keyscan -H "$IP_DEV" > ~/.ssh/known_hosts'
+                sh "ssh ubuntu@$IP_DEV 'cd /home/ubuntu/dev.kelasdevops.xyz/ && php artisan test --testsuite=Feature'"
+            }
+        }
+    }
 }
